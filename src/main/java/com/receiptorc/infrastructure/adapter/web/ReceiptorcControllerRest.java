@@ -1,10 +1,11 @@
 package com.receiptorc.infrastructure.adapter.web;
 
-
 import com.receiptorc.domain.service.IReceiptorcService;
 import com.receiptorc.dto.ReceiptRequestDTO;
 import com.receiptorc.dto.ReceiptResponseDTO;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import com.receiptorc.infrastructure.exceptions.NotFoundException;
+import com.receiptorc.infrastructure.exceptions.UploadException;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,36 +15,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
-import java.util.List;
+import java.util.Set;
 
 @Validated
 @RestController
 @RequestMapping("/")
 public class ReceiptorcControllerRest {
-    private final IReceiptorcService receiptorcService;
-
-    // Builder
     @Autowired
-    public ReceiptorcControllerRest(IReceiptorcService receiptorcService) {
-        this.receiptorcService = receiptorcService;
-    }
+    private IReceiptorcService receiptorcService;
 
-    private final List<String> extensionsAllowed = List.of("png", "jpeg");
+    private final Set<String> extensionsAllowed = Set.of("png", "jpg");
 
     /**
      * This function is a post mapping to upload the file
      * @param file is an archive with extension and size controlled to up receipt
      * @return a dto with response of compensation money
-     * @throws FileNotFoundException temporally
-     * @throws FileUploadException temporally
+     * @throws NotFoundException when the file doesn't found in system.
+     * @throws UploadException will catch any problem with extension of file
      */
     @PostMapping("/receipt")
     public ResponseEntity<ReceiptResponseDTO> uploadReceipt(
-            @RequestParam("file") MultipartFile file) throws FileNotFoundException, FileUploadException {
+            @RequestParam("file") MultipartFile file) throws NotFoundException, UploadException {
 
         if (file.isEmpty()){
-            throw new FileNotFoundException("File cannot found"); // TODO: TEMPORALLY. EXCHANGE THE EXCEPTION FOR A HANDLER.
+            throw new NotFoundException("File not found.");
         }
 
         getExtension(file);
@@ -54,20 +49,18 @@ public class ReceiptorcControllerRest {
 
 
     /**
-     * This function valid the file param to ensure that it is not null or don't be a type allowed by system
+     * This function valid the file param to ensure that it is not null or blank or don't be a type allowed by system
      * @param file is the file uploaded by user
-     * @throws FileUploadException temporally
+     * @throws UploadException will catch any problem with extension of file
      */
-    private void getExtension(MultipartFile file) throws FileUploadException {
-        String contentType = file.getContentType(); // returns something kind image/png
-
-        if (contentType == null || !contentType.contains("/")) {
-            throw new FileUploadException("Invalid file type.");
+    private void getExtension(MultipartFile file) throws UploadException {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename()); // file.jpg  -> extension = jpg
+        if (extension == null || extension.isBlank()) {
+            throw new UploadException("Invalid file type.");
         }
 
-        String extension = contentType.split("/")[1].toLowerCase();
         if (!extensionsAllowed.contains(extension)) {
-            throw new FileUploadException("Extension ." + extension + " is not allowed."); // TODO: TEMPORALLY. EXCHANGE THE EXCEPTION FOR A HANDLER.
+            throw new UploadException("Extension ." + extension + " is not allowed.");
         }
     }
 }
