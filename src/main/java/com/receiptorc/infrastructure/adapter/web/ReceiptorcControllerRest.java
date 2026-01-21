@@ -1,7 +1,6 @@
 package com.receiptorc.infrastructure.adapter.web;
 
-import com.receiptorc.domain.service.IReceiptorcService;
-import com.receiptorc.dto.ReceiptRequestDTO;
+import com.receiptorc.domain.ports.IReceiptorcService;
 import com.receiptorc.dto.ReceiptResponseDTO;
 import com.receiptorc.infrastructure.exceptions.NotFoundException;
 import com.receiptorc.infrastructure.exceptions.UploadException;
@@ -24,7 +23,7 @@ public class ReceiptorcControllerRest {
     @Autowired
     private IReceiptorcService receiptorcService;
 
-    private final Set<String> extensionsAllowed = Set.of("png", "jpg");
+    private static final Set<String> extensionsAllowed = Set.of("png", "jpg");
 
     /**
      * This function is a post mapping to upload the file
@@ -37,14 +36,10 @@ public class ReceiptorcControllerRest {
     public ResponseEntity<ReceiptResponseDTO> uploadReceipt(
             @RequestParam("file") MultipartFile file) throws NotFoundException, UploadException {
 
-        if (file.isEmpty()){
-            throw new NotFoundException("File not found.");
-        }
+        if (file.isEmpty()){throw new NotFoundException("File not found.");}
+        getExtension(file); // Verify if file is valid
 
-        getExtension(file);
-        ReceiptRequestDTO receipt = new ReceiptRequestDTO(file);
-
-        return ResponseEntity.ok(receiptorcService.receiptorc(receipt));
+        return ResponseEntity.ok(receiptorcService.receiptorc(file));
     }
 
 
@@ -53,7 +48,9 @@ public class ReceiptorcControllerRest {
      * @param file is the file uploaded by user
      * @throws UploadException will catch any problem with extension of file
      */
-    private void getExtension(MultipartFile file) throws UploadException {
+    private static void getExtension(MultipartFile file) throws UploadException {
+        // TODO: USE A DIFFERENT WAY TO VERIFY THE AUTHENTIFY OF THE FILE. SOMETHING KIND TIKA
+        // SEE THIS ARTICLE: https://medium.com/@pvprasanth474/how-to-prevent-fake-file-uploads-in-java-detect-file-type-safely-d96acac68b9f
         String extension = FilenameUtils.getExtension(file.getOriginalFilename()); // file.jpg  -> extension = jpg
         if (extension == null || extension.isBlank()) {
             throw new UploadException("Invalid file type.");
