@@ -1,4 +1,4 @@
-package com.receiptorc.infrastructure.exceptions;
+package com.receiptorc.exceptions;
 
 import lombok.Getter;
 import lombok.Setter;

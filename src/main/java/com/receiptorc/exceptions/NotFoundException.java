@@ -1,4 +1,4 @@
-package com.receiptorc.infrastructure.exceptions;
+package com.receiptorc.exceptions;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException () {super("Not found exception.");}

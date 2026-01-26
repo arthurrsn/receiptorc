@@ -1,4 +1,4 @@
-package com.receiptorc.infrastructure.exceptions;
+package com.receiptorc.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class GlobalExceptionHandling extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> genericErrorHandler(Exception e) {
-        RestErrorMessage threatResponse = new RestErrorMessage(HttpStatus.NOT_FOUND.value(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
+        RestErrorMessage threatResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -26,9 +26,9 @@ public class GlobalExceptionHandling extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
     }
 
-    @ExceptionHandler(UploadException.class)
-    public final ResponseEntity<Object> uploadErrorHandler(UploadException e) {
+    @ExceptionHandler(TechnicalException.class)
+    public final ResponseEntity<Object> technicalException(TechnicalException e){
         RestErrorMessage threatResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
     }
 }
