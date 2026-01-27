@@ -1,12 +1,10 @@
 package com.receiptorc.controller;
 
 import com.receiptorc.dto.ReceiptResponseDTO;
+import com.receiptorc.service.IReceiptValidation;
 import com.receiptorc.service.ReceiptValidation;
 import com.receiptorc.service.ReceiptorcService;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +17,7 @@ import java.io.IOException;
 @RequestMapping("/api")
 public class ReceiptorcControllerRest {
     private final ReceiptorcService receiptorcService;
-    private final ReceiptValidation receiptValidation;
+    private final IReceiptValidation receiptValidation;
 
     public ReceiptorcControllerRest(ReceiptorcService receiptorcService, ReceiptValidation receiptValidation){
         this.receiptorcService = receiptorcService;
@@ -34,8 +32,8 @@ public class ReceiptorcControllerRest {
      */
     @PostMapping("/receipt")
     public ResponseEntity<ReceiptResponseDTO> uploadReceipt(
-            @RequestParam("file") MultipartFile file) throws IOException {
-        receiptValidation.validateFile(file); // Verify if file is valid
+            @RequestParam("file") MultipartFile file) throws IOException, InterruptedException {
+        receiptValidation.validateController(file); // Verify if file is valid
         byte[] fileBytes = file.getBytes();
         return ResponseEntity.ok(receiptorcService.receiptorc(fileBytes));
     }

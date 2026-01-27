@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Set;
 
 @Service
-public class ReceiptValidation {
+public class ReceiptValidation implements IReceiptValidation {
     private final Tika tika;
 
     public ReceiptValidation(Tika tika) {
@@ -28,7 +28,8 @@ public class ReceiptValidation {
      * @throws TechnicalException will catch any problem with extension of file
      * @throws IOException if the file has any problem unknow
      */
-    public void validateFile(MultipartFile file) throws TechnicalException, IOException {
+    @Override
+    public void validateController(MultipartFile file) throws TechnicalException, IOException {
         if (file.isEmpty()) {
             throw new TechnicalException("The file is empty.");
         }
