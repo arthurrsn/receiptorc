@@ -1,14 +1,14 @@
 package com.receiptorc.service;
 
 import com.receiptorc.exceptions.TechnicalException;
+import com.receiptorc.ports.IReceiptValidation;
 import org.apache.tika.Tika;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 
 @Service
@@ -19,8 +19,8 @@ public class ReceiptValidation implements IReceiptValidation {
         this.tika = tika;
     }
 
-    private static final Set<String> EXTENSIONS_ALLOWED = Set.of(
-            "image/png", "image/jpeg", "image/webp");
+    private static final Set<String> EXTENSIONS_ALLOWED = Collections.unmodifiableSet( Set.of(
+            "image/png", "image/jpeg", "image/webp"));
 
     /**
      * This function valid the file param to ensure that it is not null or don't be a type allowed by system
@@ -46,7 +46,7 @@ public class ReceiptValidation implements IReceiptValidation {
 
         // structure Verify (ImageIO)
         try (var is = file.getInputStream()) {
-            BufferedImage image = ImageIO.read(is);
+            var image = ImageIO.read(is);
             if (image == null) {
                 // if Tika detect type but the ImageIo returns null,
                 // the file has been a "false positive" malicious.

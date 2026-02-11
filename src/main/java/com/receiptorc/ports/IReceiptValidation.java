@@ -1,4 +1,4 @@
-package com.receiptorc.service;
+package com.receiptorc.ports;
 
 import com.receiptorc.exceptions.TechnicalException;
 import org.springframework.web.multipart.MultipartFile;

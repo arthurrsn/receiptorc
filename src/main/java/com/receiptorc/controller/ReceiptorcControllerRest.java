@@ -1,9 +1,10 @@
 package com.receiptorc.controller;
 
 import com.receiptorc.dto.ReceiptResponseDTO;
-import com.receiptorc.service.IReceiptValidation;
+import com.receiptorc.ports.IReceiptValidation;
 import com.receiptorc.service.ReceiptValidation;
 import com.receiptorc.service.ReceiptorcService;
+import com.receiptorc.utils.MultipartToFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 @RestController
@@ -33,9 +35,10 @@ public class ReceiptorcControllerRest {
     @PostMapping("/receipt")
     public ResponseEntity<ReceiptResponseDTO> uploadReceipt(
             @RequestParam("file") MultipartFile file) throws IOException, InterruptedException {
+
         receiptValidation.validateController(file); // Verify if file is valid
-        byte[] fileBytes = file.getBytes();
-        return ResponseEntity.ok(receiptorcService.receiptorc(fileBytes));
+        File fileImage = MultipartToFile.multipartToFile(file); // Converts data
+        return ResponseEntity.ok(receiptorcService.receiptorc(fileImage));
     }
 
 
