@@ -1,16 +1,19 @@
 package com.receiptorc.utils;
 
+import java.io.*;
+
 import com.receiptorc.exceptions.TechnicalException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
 import java.util.Objects;
 
 @Component
 public class MultipartToFile {
+
+    private MultipartToFile(){}
+
     /**
-     * Utility method to converts a multpart to a file.
+     * Utility method to converts a multipart to a file.
      * @param multipartFile the file before convert
      * @return a type File archive
      */

@@ -1,4 +1,6 @@
 package com.receiptorc.dto;
 
-public record ReceiptResponseDTO() {
+public record ReceiptResponseDTO(
+        String message
+) {
 }

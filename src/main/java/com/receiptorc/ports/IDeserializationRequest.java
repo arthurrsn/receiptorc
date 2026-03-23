@@ -1,5 +1,7 @@
 package com.receiptorc.ports;
 
+import tools.jackson.databind.ObjectMapper;
+
 public interface IDeserializationRequest {
-    String deserialization(String json);
+    <T> T deserialization(String json, ObjectMapper mapper, Class<T> tClass);
 }

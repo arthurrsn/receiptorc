@@ -34,7 +34,7 @@ public class ReceiptorcControllerRest {
      */
     @PostMapping("/receipt")
     public ResponseEntity<ReceiptResponseDTO> uploadReceipt(
-            @RequestParam("file") MultipartFile file) throws IOException, InterruptedException {
+            @RequestParam("file") MultipartFile file) throws IOException {
 
         receiptValidation.validateController(file); // Verify if file is valid
         File fileImage = MultipartToFile.multipartToFile(file); // Converts data
